@@ -12,7 +12,7 @@ jobs:
     env:
       GCP_PROJECT_ID: gcp-peoject-1
       GCR_IMAGE: gcr.io/gcp-peoject-1/your-gcp-image-name
-      SERVICE_NAME: my-cloud-run-service
+      SERVICE_NAME: demo-service
 
     steps:
 
