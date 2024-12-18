@@ -15,33 +15,32 @@ jobs:
       SERVICE_NAME: demo-service
 
     steps:
+      # Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    # Step 1: Checkout the code
-    - name: Checkout code
-      uses: actions/checkout@v3
+      # Authenticate to Google Cloud
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCLOUD_AUTH }}
 
-    # Step 2: Authenticate to Google Cloud
-    - name: Authenticate to Google Cloud
-      uses: google-github-actions/auth@v1  # Updated to v1
-      with:
-        credentials_json: ${{ secrets.GCLOUD_AUTH }}
+      # Set up Google Cloud SDK
+      - name: Set up Google Cloud CLI
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
 
-    # Step 3: Set up Google Cloud SDK
-    - name: Set up Google Cloud CLI
-      uses: google-github-actions/setup-gcloud@v1
-      with:
-        project_id: ${{ env.GCP_PROJECT_ID }}
+      # Build and Push Docker Image
+      - name: Build and Push Docker Image to GCR
+        run: |
+          gcloud builds submit --tag $GCR_IMAGE
 
-    # Step 4: Build and Push Docker Image to Google Container Registry (GCR)
-    - name: Build and Push Docker Image to GCR
-      run: |
-        gcloud builds submit --tag $GCR_IMAGE
-
-    # Step 5: Deploy to Google Cloud Run
-    - name: Deploy to Google Cloud Run
-      run: |
-        gcloud run deploy $SERVICE_NAME \
-          --image $GCR_IMAGE \
-          --region us-central1 \
-          --platform managed \
-          --allow-unauthenticated
+      # Deploy to Google Cloud Run
+      - name: Deploy to Google Cloud Run
+        run: |
+          gcloud run deploy $SERVICE_NAME \
+            --image $GCR_IMAGE \
+            --region us-central1 \
+            --platform managed \
+            --allow-unauthenticated
