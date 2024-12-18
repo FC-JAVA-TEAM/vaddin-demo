@@ -5,14 +5,14 @@ on:
     branches:
       - main
 
-env:
-  GCP_PROJECT_ID: gcp-peoject-1
-  GCR_IMAGE: gcr.io/${{ env.GCP_PROJECT_ID }}/your-gcp-image-name
-  SERVICE_NAME: my-cloud-run-service
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
+    env:
+      GCP_PROJECT_ID: gcp-peoject-1
+      GCR_IMAGE: gcr.io/gcp-peoject-1/your-gcp-image-name
+      SERVICE_NAME: my-cloud-run-service
 
     steps:
 
