@@ -16,24 +16,29 @@ jobs:
 
     steps:
 
-    # 1. Checkout your repository
+    # Step 1: Checkout the code
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # 2. Set up Google Cloud SDK
-    - name: Set up Google Cloud SDK
+    # Step 2: Authenticate to Google Cloud
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v0
+      with:
+        credentials_json: ${{ secrets.GCLOUD_AUTH }}
+
+    # Step 3: Set up Google Cloud SDK
+    - name: Set up Google Cloud CLI
       uses: google-github-actions/setup-gcloud@v1
       with:
-        service_account_key: ${{ secrets.GCLOUD_AUTH }}
         project_id: ${{ env.GCP_PROJECT_ID }}
 
-    # 3. Build and push Docker image to Google Container Registry (GCR)
+    # Step 4: Build and Push the Docker Image to Google Container Registry (GCR)
     - name: Build and Push Docker Image to GCR
       run: |
         gcloud builds submit --tag $GCR_IMAGE
 
-    # 4. Deploy the application to Google Cloud Run
-    - name: Deploy to Cloud Run
+    # Step 5: Deploy the service to Google Cloud Run
+    - name: Deploy to Google Cloud Run
       run: |
         gcloud run deploy $SERVICE_NAME \
           --image $GCR_IMAGE \
