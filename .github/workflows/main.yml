@@ -1,0 +1,31 @@
+name: Build and Deploy to GCP
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        service_account_key: ${{ secrets.GCLOUD_AUTH }}
+        project_id: your-gcp-project-id
+
+    - name: Build and Push to GCP
+      run: |
+        gcloud builds submit --tag gcr.io/your-gcp-project-id/image-name
+
+    - name: Deploy to Cloud Run
+      run: |
+        gcloud run deploy service-name \
+          --image gcr.io/your-gcp-project-id/image-name \
+          --region us-central1 \
+          --platform managed
