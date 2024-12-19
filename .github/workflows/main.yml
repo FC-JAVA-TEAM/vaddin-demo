@@ -23,7 +23,7 @@ jobs:
 
       # Build with Maven
       - name: Build with Maven
-        run: mvn clean install
+        run: mvn clean install -Pproduction
 
       # Set up Google Cloud CLI
       - name: Set up Google Cloud CLI
