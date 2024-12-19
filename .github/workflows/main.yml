@@ -29,29 +29,35 @@ jobs:
       - name: Set up Google Cloud CLI
         uses: google-github-actions/setup-gcloud@v1
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
+        #  project_id: ${{ secrets.GCP_PROJECT_ID }}
+          project_id: gcp-peoject-1
 
       # Authenticate to Google Cloud using service account
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
         with:
-          credentials_json: ${{ secrets.SPRINGBOOT }}
+          credentials_json: ${{ secrets.SECONDPROJECT }}
+
+      # Configure Docker to authenticate with Google Cloud Artifact Registry
+      - name: Configure Docker to use gcloud credentials
+        run: |
+          gcloud auth configure-docker us-central1-docker.pkg.dev
 
       # Build Docker Image
       - name: Build Docker Image
         run: |
-          docker build -t us-central1-docker.pkg.dev/gcp-peoject-1/vadin-demo/myapp .
+          docker build -t us-central1-docker.pkg.dev/gcp-peoject-1/second-repo/testapp .
 
       # Push Docker Image to Artifact Registry
       - name: Push Docker Image to Artifact Registry
         run: |
-          docker push us-central1-docker.pkg.dev/gcp-peoject-1/vadin-demo/myapp
+          docker push us-central1-docker.pkg.dev/gcp-peoject-1/second-repo/testapp
 
       # Deploy to Google Cloud Run
       - name: Deploy to Google Cloud Run
         run: |
-          gcloud run deploy demo-service \
-            --image us-central1-docker.pkg.dev/gcp-peoject-1/vadin-demo/myapp \
+          gcloud run deploy second-service \
+            --image us-central1-docker.pkg.dev/gcp-peoject-1/second-repo/testapp \
             --region us-central1 \
             --platform managed \
             --allow-unauthenticated
